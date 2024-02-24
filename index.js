@@ -3,13 +3,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("search-input");
     const searchButton = document.getElementById("search-button");
 
-    // Define the iNaturalist API endpoints
+    // Define the iNaturalist API endpoint for observations
     const observationsEndpoint = 'https://api.inaturalist.org/v1/observations';
 
-    // Function to fetch observations based on longitude and latitude
-    function fetchObservations(latitude, longitude) {
-        // Make a GET request to retrieve observation data based on latitude and longitude
-        fetch(`${observationsEndpoint}?lat=${latitude}&lng=${longitude}`)
+    // Function to fetch observations based on city name
+    function fetchObservations(cityName) {
+        // Make a GET request to retrieve observations based on city name
+        fetch(`${observationsEndpoint}?q=${encodeURIComponent(cityName)}`)
             .then(response => response.json())
             .then(data => {
                 // Clear previous observations
@@ -40,31 +40,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching observations:', error);
             });
     }
 
     // Event listener for search button click
     searchButton.addEventListener("click", function() {
-        const latitude = parseFloat(searchInput.value.split(',')[0].trim());
-        const longitude = parseFloat(searchInput.value.split(',')[1].trim());
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-            fetchObservations(latitude, longitude);
-        } else {
-            console.error('Invalid latitude and longitude');
+        const cityName = searchInput.value.trim();
+        if (cityName) {
+            fetchObservations(cityName);
         }
     });
 
     // Optionally, you can also search for observations when the user presses Enter in the search input
     searchInput.addEventListener("keypress", function(event) {
         if (event.key === 'Enter') {
-            const latitude = parseFloat(searchInput.value.split(',')[0].trim());
-            const longitude = parseFloat(searchInput.value.split(',')[1].trim());
-            if (!isNaN(latitude) && !isNaN(longitude)) {
-                fetchObservations(latitude, longitude);
-            } else {
-                console.error('Invalid latitude and longitude');
+            const cityName = searchInput.value.trim();
+            if (cityName) {
+                fetchObservations(cityName);
             }
         }
     });
 });
+
